@@ -3,7 +3,8 @@ import processing.core.PImage;//导入图形库
 import ddf.minim.*;//导入minim库
 
 public class test extends PApplet {
-    PImage backgroundImage;
+    PImage backgroundImage1;// 绘制背景;
+    PImage backgroundImage2;
     Minim minim;
     AudioPlayer[] player = new AudioPlayer[100];//定义音乐的初始化变量
     int currentPage = 0;//定义页数PImage backgroundImage;//定义图片
@@ -14,11 +15,12 @@ public class test extends PApplet {
     }
 
     public void settings() {
-        size(800, 1052);
+        size(1500, 1250);
     }
 
     public void setup() {
-        backgroundImage = loadImage("background.jpg"); // 加载背景图片
+        backgroundImage1 = loadImage("background1.png"); // 加载背景图片
+        backgroundImage2 = loadImage("background2.png");
         minim = new Minim(this);
         player[1] = minim.loadFile("data/music1.mp3");
     }
@@ -52,19 +54,20 @@ public class test extends PApplet {
 
     void drawPage1() {
 
-        image(backgroundImage, 0, 0); // 绘制背景
-        fill(45, 26, 255);
-        textSize(70);
-        text("MusicPlayer", 400, 200);//展示文字
+        image(backgroundImage1, 0, 0); // 绘制背景
+//        fill(45, 26, 255);
+//        textSize(70);
+//        text("MusicPlayer", 400, 200);//展示文字
         fill(0, 255, 255);
         fill(0);
         textSize(32);
         text("page 1", width / 2, height / 2);
-        drawButton("back to page 2", width / 2, height / 2 + 50);//绘制音乐波形
+        drawButton("back to page 2", width / 2, height / 2 + 50);
     }
 
     void drawPage2() {
         background(0, 255, 255);
+        image(backgroundImage2, 0, 0); // 绘制背景
         fill(0);
         textSize(32);
         text("page 2", width / 2, height / 2);
