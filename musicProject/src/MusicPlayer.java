@@ -45,37 +45,16 @@ public class MusicPlayer extends PApplet {
     // Setup method called once when the program starts
     public void setup() {
         backgroundImage1 = loadImage("background1.png"); // Load background image 1
-        if (backgroundImage1 == null) {
-            println("Error loading background1.png");
-        }
         backgroundImage2 = loadImage("background2.png"); // Load background image 2
-        if (backgroundImage2 == null) {
-            println("Error loading background2.png");
-        }
         addSongBackground = loadImage("background2.png"); // Load add song background image
-        if (addSongBackground == null) {
-            println("Error loading addSongBackground.png");
-        }
         minim = new Minim(this); // Initialize Minim library
 
         // Initialize song information
         try {
             songs[0] = new Song("Song 1", minim.loadFile("data/music1.mp3")); // Load first song
-            if (songs[0].player == null) {
-                println("Error loading music1.mp3");
-            }
             songs[1] = new Song("Song 2", minim.loadFile("data/music2.mp3")); // Load second song
-            if (songs[1].player == null) {
-                println("Error loading music2.mp3");
-            }
             songs[2] = new Song("Song 3", minim.loadFile("data/music3.mp3")); // Load third song
-            if (songs[2].player == null) {
-                println("Error loading music3.mp3");
-            }
             songs[3] = new Song("Song 4", minim.loadFile("data/music4.mp3")); // Load fourth song
-            if (songs[3].player == null) {
-                println("Error loading music4.mp3");
-            }
             songCount = 4; // Update current number of songs
         } catch (Exception e) {
             println("Error loading audio files: " + e.getMessage()); // Capture and print error loading audio files
@@ -97,14 +76,7 @@ public class MusicPlayer extends PApplet {
 
     // Draw the content of page 1
     void drawPage1() {
-        if (backgroundImage1 != null) {
-            image(backgroundImage1, 0, 0); // Draw background image 1
-        } else {
-            fill(255, 0, 0);
-            textSize(32);
-            textAlign(CENTER, CENTER);
-            text("Error: background1.png not loaded", width / 2, height / 2);
-        }
+        image(backgroundImage1, 0, 0); // Draw background image 1
         fill(0);
         textSize(48);
         textAlign(CENTER, CENTER);
@@ -120,25 +92,14 @@ public class MusicPlayer extends PApplet {
 
     // Draw the content of page 2
     void drawPage2() {
-        if (backgroundImage2 != null) {
-            image(backgroundImage2, 0, 0); // Draw background image 2
-        } else {
-            fill(255, 0, 0);
-            textSize(32);
-            textAlign(CENTER, CENTER);
-            text("Error: background2.png not loaded", width / 2, height / 2);
-        }
+        image(backgroundImage2, 0, 0); // Draw background image 2
         fill(0);
         textSize(48);
         textAlign(CENTER, CENTER);
 
         // Display the name of the currently playing song
         textSize(36);
-        if (currentMusicIndex >= 0 && currentMusicIndex < songCount && songs[currentMusicIndex] != null) {
-            text(songs[currentMusicIndex].name, width / 2, height / 2 - 200);
-        } else {
-            text("No valid song selected", width / 2, height / 2 - 200);
-        }
+        text(songs[currentMusicIndex].name, width / 2, height / 2 - 200);
 
         textSize(36);
         text("press space to start/pause", width / 2, height / 2 - 100); // Prompt information
@@ -156,6 +117,7 @@ public class MusicPlayer extends PApplet {
         if (currentMusicIndex >= 0 && currentMusicIndex < songCount && songs[currentMusicIndex] != null && songs[currentMusicIndex].player != null && songs[currentMusicIndex].player.isPlaying()) {
             // Draw waveform
             for (int i = 0; i < songs[currentMusicIndex].player.bufferSize() - 1; i++) {
+                // Draw progress bar
                 float x1 = map(i, 0, songs[currentMusicIndex].player.bufferSize(), 0, width); // Map x coordinate
                 float x2 = map(i + 1, 0, songs[currentMusicIndex].player.bufferSize(), 0, width); // Map next x coordinate
 
@@ -165,37 +127,14 @@ public class MusicPlayer extends PApplet {
 
                 // Draw right channel waveform
                 line(x1, 150 + songs[currentMusicIndex].player.right.get(i) * 50, x2, 150 + songs[currentMusicIndex].player.right.get(i + 1) * 50);
-            }
+                 }
 
-            // Draw progress bar
-            float progress = (float) songs[currentMusicIndex].player.position() / songs[currentMusicIndex].player.length();
-            float mappedProgress = map(progress, 0, 1, 0, barWidth);
-            fill(255, 255, 0);
-            noStroke();
-            rect(width / 2 - barWidth / 2, height - 100, mappedProgress, 20); // Draw progress bar
-
-            // Display remaining time
-            fill(0);
-            textSize(16);
-            text("Remaining: " + formatTime(songs[currentMusicIndex].player.length() - songs[currentMusicIndex].player.position()), width / 2 - barWidth / 2, height - 130);
-        } else {
-            // Debugging information
-            fill(255, 0, 0);
-            textSize(16);
-            text("No song playing or invalid index", width / 2, height - 130);
         }
     }
 
     // Draw the content of the add song page
     void drawAddSongPage() {
-        if (addSongBackground != null) {
-            image(addSongBackground, 0, 0); // Draw add song background image
-        } else {
-            fill(255, 0, 0);
-            textSize(32);
-            textAlign(CENTER, CENTER);
-            text("Error: addSongBackground.png not loaded", width / 2, height / 2);
-        }
+        image(addSongBackground, 0, 0); // Draw add song background image
         fill(0); // Set text color to black
         textSize(32); // Set text size
         textAlign(CENTER, CENTER); // Set text alignment to center
@@ -245,13 +184,8 @@ public class MusicPlayer extends PApplet {
         } else if (songCount < songs.length) { // If song list is not full
             String filePath = selection.getAbsolutePath(); // Get file path
             String songName = selection.getName(); // Get file name
-            AudioPlayer player = minim.loadFile(filePath);
-            if (player == null) {
-                statusMessage = "Failed to load the selected file";
-            } else {
-                songs[songCount++] = new Song(songName, player); // Add new song to list
-                statusMessage = "Successfully added a song: " + songName; // Print success message
-            }
+            songs[songCount++] = new Song(songName, minim.loadFile(filePath)); // Add new song to list
+            statusMessage = "Successfully added a song: " + songName; // Print success message
         } else {
             statusMessage = "Song list is full, can't add more songs!"; // Print error message
         }
@@ -280,7 +214,7 @@ public class MusicPlayer extends PApplet {
 
     // Start playing the current music
     void playCurrentMusic() {
-        if (currentMusicIndex >= 0 && currentMusicIndex < songCount && songs[currentMusicIndex] != null && songs[currentMusicIndex].player != null) {
+        if (songs[currentMusicIndex] != null && songs[currentMusicIndex].player != null) {
             songs[currentMusicIndex].player.rewind(); // Reset music playback position
             songs[currentMusicIndex].player.play(); // Start playing music
         }
@@ -288,23 +222,16 @@ public class MusicPlayer extends PApplet {
 
     // Stop playing the current music
     void stopCurrentMusic() {
-        if (currentMusicIndex >= 0 && currentMusicIndex < songCount && songs[currentMusicIndex] != null && songs[currentMusicIndex].player != null) {
+        if (songs[currentMusicIndex] != null && songs[currentMusicIndex].player != null) {
             songs[currentMusicIndex].player.pause(); // Pause playing music
         }
     }
 
-    // Format time in MM:SS format
-    String formatTime(int millis) {
-        int seconds = millis / 1000; // Convert milliseconds to seconds
-        int minutes = seconds / 60; // Convert seconds to minutes
-        seconds %= 60; // Get remaining seconds
-        return nf(minutes, 2) + ":" + nf(seconds, 2); // Format time as MM:SS
-    }
 
     // Handle keyboard input events
     public void keyPressed() {
         if (keyCode == ' ') {
-            if (currentMusicIndex >= 0 && currentMusicIndex < songCount && songs[currentMusicIndex] != null && songs[currentMusicIndex].player != null) {
+            if (songs[currentMusicIndex] != null && songs[currentMusicIndex].player != null) {
                 if (songs[currentMusicIndex].player.isPlaying()) {
                     songs[currentMusicIndex].player.pause(); // Pause playing music
                 } else {
