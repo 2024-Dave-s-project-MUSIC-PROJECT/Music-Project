@@ -106,6 +106,7 @@ public class MusicPlayer extends PApplet {
         drawButton("BACK", width / 2, height / 2 + 250); // Draw button "BACK"
         drawButton("switch up", width / 2, height / 2 + 150); // Draw button "switch up"
         drawButton("switch down", width / 2, height / 2 + 200); // Draw button "switch down"
+        drawButton("DELETE", width / 2, height / 2 + 300); // Draw button "DELETE"
 
         // Display status message
         fill(255, 0, 0);
@@ -117,7 +118,6 @@ public class MusicPlayer extends PApplet {
         if (currentMusicIndex >= 0 && currentMusicIndex < songCount && songs[currentMusicIndex] != null && songs[currentMusicIndex].player != null && songs[currentMusicIndex].player.isPlaying()) {
             // Draw waveform
             for (int i = 0; i < songs[currentMusicIndex].player.bufferSize() - 1; i++) {
-                // Draw progress bar
                 float x1 = map(i, 0, songs[currentMusicIndex].player.bufferSize(), 0, width); // Map x coordinate
                 float x2 = map(i + 1, 0, songs[currentMusicIndex].player.bufferSize(), 0, width); // Map next x coordinate
 
@@ -127,8 +127,14 @@ public class MusicPlayer extends PApplet {
 
                 // Draw right channel waveform
                 line(x1, 150 + songs[currentMusicIndex].player.right.get(i) * 50, x2, 150 + songs[currentMusicIndex].player.right.get(i + 1) * 50);
-                 }
+            }
 
+            // Draw progress bar
+            float progress = (float) songs[currentMusicIndex].player.position() / songs[currentMusicIndex].player.length();
+            float mappedProgress = map(progress, 0, 1, 0, barWidth);
+            fill(255, 255, 0);
+            noStroke();
+            rect(width / 2 - barWidth / 2, height - 100, mappedProgress, 20); // Draw progress bar
         }
     }
 
@@ -173,6 +179,8 @@ public class MusicPlayer extends PApplet {
                 switchUp(); // Switch to previous song
             } else if (mouseY > height / 2 + 175 && mouseY < height / 2 + 225) { // Clicked "SWITCH DOWN" button
                 switchDown(); // Switch to next song
+            } else if (mouseY > height / 2 + 275 && mouseY < height / 2 + 325) { // Clicked "DELETE" button
+                deleteCurrentSong(); // Delete the current song
             }
         }
     }
@@ -227,6 +235,41 @@ public class MusicPlayer extends PApplet {
         }
     }
 
+    // Delete the current song
+    void deleteCurrentSong() {
+        if (currentMusicIndex >= 0 && currentMusicIndex < songCount && songs[currentMusicIndex] != null) {
+            // Close the audio player to free resources
+            if (songs[currentMusicIndex].player != null) {
+                songs[currentMusicIndex].player.close();
+            }
+
+            // Shift all subsequent songs one position back
+            for (int i = currentMusicIndex; i < songCount - 1; i++) {
+                songs[i] = songs[i + 1];
+            }
+
+            // Clear the last slot
+            songs[songCount - 1] = null;
+            songCount--;
+
+            // Adjust currentMusicIndex if necessary
+            if (currentMusicIndex >= songCount) {
+                currentMusicIndex = 0;
+            }
+
+            statusMessage = "Deleted the current song";
+        } else {
+            statusMessage = "No song to delete";
+        }
+    }
+
+    // Format time in MM:SS format
+    String formatTime(int millis) {
+        int seconds = millis / 1000; // Convert milliseconds to seconds
+        int minutes = seconds / 60; // Convert seconds to minutes
+        seconds %= 60; // Get remaining seconds
+        return nf(minutes, 2) + ":" + nf(seconds, 2); // Format time as MM:SS
+    }
 
     // Handle keyboard input events
     public void keyPressed() {
