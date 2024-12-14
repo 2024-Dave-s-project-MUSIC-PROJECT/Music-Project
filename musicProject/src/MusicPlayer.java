@@ -129,13 +129,7 @@ public class MusicPlayer extends PApplet {
                 line(x1, 150 + songs[currentMusicIndex].player.right.get(i) * 50, x2, 150 + songs[currentMusicIndex].player.right.get(i + 1) * 50);
             }
 
-            // Draw progress bar
-            float progress = (float) songs[currentMusicIndex].player.position() / songs[currentMusicIndex].player.length();
-            float mappedProgress = map(progress, 0, 1, 0, barWidth);
-            fill(255, 255, 0);
-            noStroke();
-            rect(width / 2 - barWidth / 2, height - 100, mappedProgress, 20); // Draw progress bar
-        }
+           }
     }
 
     // Draw the content of the add song page
@@ -261,14 +255,6 @@ public class MusicPlayer extends PApplet {
         } else {
             statusMessage = "No song to delete";
         }
-    }
-
-    // Format time in MM:SS format
-    String formatTime(int millis) {
-        int seconds = millis / 1000; // Convert milliseconds to seconds
-        int minutes = seconds / 60; // Convert seconds to minutes
-        seconds %= 60; // Get remaining seconds
-        return nf(minutes, 2) + ":" + nf(seconds, 2); // Format time as MM:SS
     }
 
     // Handle keyboard input events
